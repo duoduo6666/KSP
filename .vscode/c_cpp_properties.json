@@ -4,13 +4,12 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/duoduo/esp/krpc/managed_components/espressif__led_strip/include/**"
+                "/home/duoduo/esp/krpc/managed_components/espressif__led_strip/include/**",
                 "/home/duoduo/esp/esp-idf/components/**",
-                "/home/duoduo/.espressif/tools/xtensa-esp32s3-elf/**",
-                "/home/duoduo/esp/esp-idf/components/xtensa/include/**"
+                "/home/duoduo/.espressif/tools/xtensa-esp32s3-elf/**"
             ],
             "defines": [],
-            "compilerPath": "",
+            "compilerPath": "/home/duoduo/.espressif/tools/xtensa-esp32s3-elf/esp-12.2.0_20230208/xtensa-esp32s3-elf/bin/xtensa-esp32s3-elf-gcc",
             "cStandard": "c17",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "${default}",
