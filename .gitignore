@@ -1,0 +1,7 @@
+/build
+
+/managed_components
+
+*.back
+
+sdkconfig.old

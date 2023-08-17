@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/duoduo/esp/krpc/managed_components/espressif__led_strip/include/**"
+                "/home/duoduo/esp/esp-idf/components/**",
+                "/home/duoduo/.espressif/tools/xtensa-esp32s3-elf/**",
+                "/home/duoduo/esp/esp-idf/components/xtensa/include/**"
+            ],
+            "defines": [],
+            "compilerPath": "",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "${default}",
+            "configurationProvider": "None"
+        }
+    ],
+    "version": 4
+}
