@@ -3,6 +3,7 @@
 
 #include "led.h"
 #include "wifi.h"
+#include "krpc.h"
 
 void app_main(void){
     ESP_ERROR_CHECK(LED_init());
@@ -12,4 +13,5 @@ void app_main(void){
     wifi_sta_init();
     
     ESP_ERROR_CHECK(LED_set_pixel(0, 1, 0));
+    connect();
 }
