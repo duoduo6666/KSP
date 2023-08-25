@@ -4,10 +4,11 @@
 #include <sys/socket.h>
 
 #define HOST_IP "192.168.1.128"
-#define PORT 6666
+#define PORT 50000
 
 static const char *TAG = "KSP-Socket";
 
+// socket
 int s;
 
 struct sockaddr_in dest_addr;
@@ -23,16 +24,41 @@ esp_err_t socket_init(){
     dest_addr.sin_port = htons(PORT);
     inet_pton(AF_INET, HOST_IP, &dest_addr.sin_addr);
     
-    struct sockaddr conn_addr = {
-        .sa_family = AF_INET,
-        .sa_data = dest_addr.sin_addr.s_addr,
-    };
-    int err = connect(s, conn_addr, sizeof(conn_addr));
+    int err = connect(s, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
     if (err != 0) {
         ESP_LOGE(TAG, "Socket unable to connect: errno %d", errno);
         return ESP_FAIL;
     }
     ESP_LOGI(TAG, "Successfully connected");
     
+    return ESP_OK;
+}
+
+esp_err_t socket_send_msg(uint8_t *msg, size_t len){
+    int err = send(s, msg, len, 0);
+    if (err < 0){
+        ESP_LOGE(TAG, "Socket 发送数据失败: errno %d", errno);
+        return ESP_FAIL;
+    }
+    return ESP_OK;
+}
+
+esp_err_t socket_recv_byte(uint8_t *byte){
+    uint8_t buf[1];
+    int err = recv(s, buf, 1, MSG_WAITALL);
+    if (err < 0){
+        ESP_LOGE(TAG, "Socket 接收数据失败: errno %d", errno);
+        return ESP_FAIL;
+    }
+    *byte = buf[0];
+    return ESP_OK;
+}
+
+esp_err_t socket_recv_data(uint8_t *buf, size_t len){
+    int err = recv(s, buf, len, MSG_WAITALL);
+    if (err < 0){
+        ESP_LOGE(TAG, "Socket 接收数据失败: errno %d", errno);
+        return ESP_FAIL;
+    }
     return ESP_OK;
 }
