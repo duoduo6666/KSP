@@ -15,14 +15,17 @@ esp_err_t krpc_send(u_int8_t *buf, size_t len){
     varint.value = len;
     
     size_t varint_len = varint__get_packed_size(&varint);
-    u_int8_t *varint_buf = malloc(varint_len); 
+    uint8_t *varint_buf = malloc(varint_len); 
     if (varint_buf == NULL){
         ESP_LOGE(TAG, "内存分配失败");
         return ESP_FAIL;
     }
     varint__pack(&varint,varint_buf);
 
-    if (socket_send_msg(varint_buf+1, varint_len)!=ESP_OK && socket_send_msg(buf, len)!=ESP_OK){
+    esp_err_t err0 = socket_send_msg(varint_buf+1, varint_len-1);
+    esp_err_t err1 = socket_send_msg(buf, len);
+
+    if (err0!=ESP_OK && err1!=ESP_OK){
         free(varint_buf);
         return ESP_OK;
     }else{
@@ -32,9 +35,11 @@ esp_err_t krpc_send(u_int8_t *buf, size_t len){
 }
 
 esp_err_t krpc_recv_len(size_t *len){
-    uint8_t buf[MAX_RECV_LEN];
+    uint8_t buf[MAX_RECV_LEN+1];
+    buf[0] = 0x08;
     Varint *varint = NULL;
-    for (uint8_t i=0; i<MAX_RECV_LEN; i++){
+    for (size_t i=1; i<MAX_RECV_LEN; i++){
+    // for (size_t i=MAX_RECV_LEN-1; i>-1; i--){
         esp_err_t err = socket_recv_byte(buf+i);
         
         // recv error
@@ -45,7 +50,8 @@ esp_err_t krpc_recv_len(size_t *len){
             return ESP_FAIL;
         }
 
-        varint = varint__unpack(NULL, i, buf);
+        varint = varint__unpack(NULL, i+1, buf);
+        ESP_LOGI(TAG, "recv len: 0x%lx", varint->value);
         if (varint != NULL){
             *len = varint->value;
             varint__free_unpacked(varint, NULL);
@@ -98,7 +104,6 @@ esp_err_t krpc_connect(){
         NULL, recv_len, recv_buf);
     free(recv_buf);
 
-    ESP_LOGI(TAG, "recv status %d", ConnectionResponse->status);
     krpc__schema__connection_response__free_unpacked(ConnectionResponse, NULL);
     ESP_LOGI(TAG, "connect ok!");
     return ESP_OK;
