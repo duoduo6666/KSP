@@ -36,6 +36,7 @@ esp_err_t socket_init(){
 
 esp_err_t socket_send_msg(uint8_t *msg, size_t len){
     int err = send(s, msg, len, 0);
+    ESP_LOGI(TAG, "send err: %d ", err);
     if (err < 0){
         ESP_LOGE(TAG, "Socket 发送数据失败: errno %d", errno);
         return ESP_FAIL;

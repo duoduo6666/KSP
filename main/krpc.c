@@ -73,12 +73,6 @@ esp_err_t krpc_connect(){
     Krpc__Schema__ConnectionRequest ConnectionRequest = KRPC__SCHEMA__CONNECTION_REQUEST__INIT;
     ConnectionRequest.type = KRPC__SCHEMA__CONNECTION_REQUEST__TYPE__RPC;
     ConnectionRequest.client_name = "ESP32";
-    uint8_t zero_bytes[0];
-    ProtobufCBinaryData zero = {
-        .len = 0,
-        .data = zero_bytes,
-    };
-    ConnectionRequest.client_identifier = zero;
 
     len = krpc__schema__connection_request__get_packed_size(&ConnectionRequest);
     buf = malloc(len); 
@@ -103,8 +97,54 @@ esp_err_t krpc_connect(){
     Krpc__Schema__ConnectionResponse *ConnectionResponse = krpc__schema__connection_response__unpack(
         NULL, recv_len, recv_buf);
     free(recv_buf);
-
-    krpc__schema__connection_response__free_unpacked(ConnectionResponse, NULL);
-    ESP_LOGI(TAG, "connect ok!");
-    return ESP_OK;
+    
+    if (ConnectionResponse->status == 0){
+        ESP_LOGI(TAG, "connect ok!");
+        krpc__schema__connection_response__free_unpacked(ConnectionResponse, NULL);
+        return ESP_OK;
+    }else{
+        ESP_LOGE(TAG, "connect error!");
+        krpc__schema__connection_response__free_unpacked(ConnectionResponse, NULL);
+        return ESP_OK;
+    }
 }
+
+esp_err_t krpc_GetStatus(){
+    uint8_t *buf;
+    size_t len;
+
+    Krpc__Schema__ProcedureCall call = KRPC__SCHEMA__PROCEDURE_CALL__INIT;
+    call.service = "KRPC";
+    call.procedure = "GetStatus";
+
+    Krpc__Schema__Request request = KRPC__SCHEMA__REQUEST__INIT;
+    request.n_calls = 1;
+    request.calls = malloc(sizeof(Krpc__Schema__ProcedureCall*) * request.n_calls);
+    request.calls[0] = &call;
+
+    len = krpc__schema__request__get_packed_size(&request);
+    buf = malloc(len); 
+    if (buf == NULL){
+        ESP_LOGE(TAG, "内存分配失败");
+        return ESP_FAIL;
+    }
+    krpc__schema__request__pack(&request,buf);
+    krpc_send(buf, len);
+    free(buf);
+    
+    size_t recv_len;
+    if (krpc_recv_len(&recv_len) != ESP_OK){
+        ESP_LOGE(TAG, "接收长度失败");
+        return ESP_FAIL;
+    }
+    uint8_t *recv_buf = malloc(recv_len);
+    if (krpc_recv_data(recv_buf, recv_len) != ESP_OK){
+        ESP_LOGE(TAG, "接收数据失败");
+    }
+    Krpc__Schema__Response *response = krpc__schema__response__unpack( NULL, recv_len, recv_buf);
+    ESP_LOGI(TAG, "response error: %s", response->error->description);
+    Krpc__Schema__Status *status = krpc__schema__status__unpack(
+        NULL, response->results[0]->value.len, response->results[0]->value.data);
+    ESP_LOGI(TAG, "kRPC server verison: %s", status->version);
+    return ESP_OK;
+} 
