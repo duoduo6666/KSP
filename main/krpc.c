@@ -130,6 +130,7 @@ esp_err_t krpc_GetStatus(){
     }
     krpc__schema__request__pack(&request,buf);
     krpc_send(buf, len);
+    free(request.calls);
     free(buf);
     
     size_t recv_len;
@@ -141,10 +142,11 @@ esp_err_t krpc_GetStatus(){
     if (krpc_recv_data(recv_buf, recv_len) != ESP_OK){
         ESP_LOGE(TAG, "接收数据失败");
     }
+
     Krpc__Schema__Response *response = krpc__schema__response__unpack( NULL, recv_len, recv_buf);
-    ESP_LOGI(TAG, "response error: %s", response->error->description);
     Krpc__Schema__Status *status = krpc__schema__status__unpack(
         NULL, response->results[0]->value.len, response->results[0]->value.data);
     ESP_LOGI(TAG, "kRPC server verison: %s", status->version);
+    free(recv_buf);
     return ESP_OK;
 } 
