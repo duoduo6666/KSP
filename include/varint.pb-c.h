@@ -17,6 +17,7 @@ PROTOBUF_C__BEGIN_DECLS
 
 typedef struct _Varint Varint;
 typedef struct _Uint32 Uint32;
+typedef struct _Float Float;
 typedef struct _Double Double;
 
 
@@ -42,6 +43,16 @@ struct  _Uint32
 };
 #define UINT32__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&uint32__descriptor) \
+    , 0 }
+
+
+struct  _Float
+{
+  ProtobufCMessage base;
+  float value;
+};
+#define FLOAT__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&float__descriptor) \
     , 0 }
 
 
@@ -93,6 +104,25 @@ Uint32 *
 void   uint32__free_unpacked
                      (Uint32 *message,
                       ProtobufCAllocator *allocator);
+/* Float methods */
+void   float__init
+                     (Float         *message);
+size_t float__get_packed_size
+                     (const Float   *message);
+size_t float__pack
+                     (const Float   *message,
+                      uint8_t             *out);
+size_t float__pack_to_buffer
+                     (const Float   *message,
+                      ProtobufCBuffer     *buffer);
+Float *
+       float__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data);
+void   float__free_unpacked
+                     (Float *message,
+                      ProtobufCAllocator *allocator);
 /* Double methods */
 void   double__init
                      (Double         *message);
@@ -120,6 +150,9 @@ typedef void (*Varint_Closure)
 typedef void (*Uint32_Closure)
                  (const Uint32 *message,
                   void *closure_data);
+typedef void (*Float_Closure)
+                 (const Float *message,
+                  void *closure_data);
 typedef void (*Double_Closure)
                  (const Double *message,
                   void *closure_data);
@@ -131,6 +164,7 @@ typedef void (*Double_Closure)
 
 extern const ProtobufCMessageDescriptor varint__descriptor;
 extern const ProtobufCMessageDescriptor uint32__descriptor;
+extern const ProtobufCMessageDescriptor float__descriptor;
 extern const ProtobufCMessageDescriptor double__descriptor;
 
 PROTOBUF_C__END_DECLS

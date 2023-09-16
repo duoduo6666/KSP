@@ -20,12 +20,30 @@
     name.n_arguments = 1; name.arguments = malloc(sizeof(Krpc__Schema__Argument*) * name.n_arguments);\
     name.arguments[0] = &Vessel; \
     request.calls[pos] = &name;
-
+#define KRPC_CALL_Vessel_Control(name, request, pos, Vessel) \
+    KRPC_REQUEST_CAll(name); \
+    name.service = "SpaceCenter"; name.procedure = "Vessel_get_Control"; \
+    name.n_arguments = 1; name.arguments = malloc(sizeof(Krpc__Schema__Argument*) * name.n_arguments);\
+    name.arguments[0] = &Vessel; \
+    request.calls[pos] = &name;
+#define KRPC_CALL_Flight_SurfaceAltitude(name, request, pos, Flight) \
+    KRPC_REQUEST_CAll(name); \
+    name.service = "SpaceCenter"; name.procedure = "Flight_get_SurfaceAltitude"; \
+    name.n_arguments = 1; name.arguments = malloc(sizeof(Krpc__Schema__Argument*) * name.n_arguments);\
+    name.arguments[0] = &Flight; \
+    request.calls[pos] = &name;
+#define KRPC_CALL_Control_set_throttle(name, request, pos, Control, value) \
+    KRPC_REQUEST_CAll(name); \
+    name.service = "SpaceCenter"; name.procedure = "Control_set_Throttle"; \
+    name.n_arguments = 2; name.arguments = malloc(sizeof(Krpc__Schema__Argument*) * name.n_arguments);\
+    name.arguments[0] = &Control; name.arguments[1] = &value; \
+    request.calls[pos] = &name;
 
 esp_err_t encode_varint(uint32_t value, uint8_t **varint_buf, size_t *varint_len);
 uint32_t decode_varint(uint8_t *varint_buf, size_t varint_len);
 esp_err_t encode_double(double value, uint8_t **double_buf, size_t *double_len);
 double decode_double(uint8_t *double_buf, size_t double_len);
+esp_err_t encode_float(float value, uint8_t **float_buf, size_t *float_len);
 
 esp_err_t krpc_connect();
 esp_err_t krpc_GetStatus();

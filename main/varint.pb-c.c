@@ -97,6 +97,51 @@ void   uint32__free_unpacked
   assert(message->base.descriptor == &uint32__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
+void   float__init
+                     (Float         *message)
+{
+  static const Float init_value = FLOAT__INIT;
+  *message = init_value;
+}
+size_t float__get_packed_size
+                     (const Float *message)
+{
+  assert(message->base.descriptor == &float__descriptor);
+  return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
+}
+size_t float__pack
+                     (const Float *message,
+                      uint8_t       *out)
+{
+  assert(message->base.descriptor == &float__descriptor);
+  return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
+}
+size_t float__pack_to_buffer
+                     (const Float *message,
+                      ProtobufCBuffer *buffer)
+{
+  assert(message->base.descriptor == &float__descriptor);
+  return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
+}
+Float *
+       float__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data)
+{
+  return (Float *)
+     protobuf_c_message_unpack (&float__descriptor,
+                                allocator, len, data);
+}
+void   float__free_unpacked
+                     (Float *message,
+                      ProtobufCAllocator *allocator)
+{
+  if(!message)
+    return;
+  assert(message->base.descriptor == &float__descriptor);
+  protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
+}
 void   double__init
                      (Double         *message)
 {
@@ -216,6 +261,44 @@ const ProtobufCMessageDescriptor uint32__descriptor =
   uint32__field_indices_by_name,
   1,  uint32__number_ranges,
   (ProtobufCMessageInit) uint32__init,
+  NULL,NULL,NULL    /* reserved[123] */
+};
+static const ProtobufCFieldDescriptor float__field_descriptors[1] =
+{
+  {
+    "value",
+    1,
+    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_TYPE_FLOAT,
+    0,   /* quantifier_offset */
+    offsetof(Float, value),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+};
+static const unsigned float__field_indices_by_name[] = {
+  0,   /* field[0] = value */
+};
+static const ProtobufCIntRange float__number_ranges[1 + 1] =
+{
+  { 1, 0 },
+  { 0, 1 }
+};
+const ProtobufCMessageDescriptor float__descriptor =
+{
+  PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
+  "float",
+  "Float",
+  "Float",
+  "",
+  sizeof(Float),
+  1,
+  float__field_descriptors,
+  float__field_indices_by_name,
+  1,  float__number_ranges,
+  (ProtobufCMessageInit) float__init,
   NULL,NULL,NULL    /* reserved[123] */
 };
 static const ProtobufCFieldDescriptor double__field_descriptors[1] =

@@ -1,5 +1,6 @@
 #include "esp_log.h"
 #include "esp_err.h"
+#include "esp_heap_caps.h"
 
 #include "krpc.pb-c.h"
 #include "varint.pb-c.h"
@@ -49,6 +50,14 @@ double decode_double(uint8_t *double_buf, size_t double_len){
     double value = double_->value;
     double__free_unpacked(double_, NULL);
     return value;
+}
+esp_err_t encode_float(float value, uint8_t **float_buf, size_t *float_len){
+    Float float_ = FLOAT__INIT;
+    float_.value = value;
+    *float_len = float__get_packed_size(&float_);
+    MALLOC(*float_buf, *float_len);
+    float__pack(&float_,*float_buf);
+    return ESP_OK;
 }
 
 esp_err_t krpc_send(uint8_t *buf, size_t len){
@@ -171,6 +180,9 @@ esp_err_t krpc_Request(Krpc__Schema__Request *request, Krpc__Schema__Response **
     size_t len;
     
     len = krpc__schema__request__get_packed_size(request);
+    unsigned int fm = esp_get_free_heap_size();
+    ESP_LOGI(TAG, "剩余%ubyte内存", fm);
+    ESP_LOGI(TAG, "申请%ubyte内存", len);
     MALLOC(buf, len); 
     krpc__schema__request__pack(request,buf);
     krpc_send(buf, len);
