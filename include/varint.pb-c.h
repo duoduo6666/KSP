@@ -16,6 +16,8 @@ PROTOBUF_C__BEGIN_DECLS
 
 
 typedef struct _Varint Varint;
+typedef struct _Uint32 Uint32;
+typedef struct _Double Double;
 
 
 /* --- enums --- */
@@ -30,6 +32,26 @@ struct  _Varint
 };
 #define VARINT__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&varint__descriptor) \
+    , 0 }
+
+
+struct  _Uint32
+{
+  ProtobufCMessage base;
+  uint32_t value;
+};
+#define UINT32__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&uint32__descriptor) \
+    , 0 }
+
+
+struct  _Double
+{
+  ProtobufCMessage base;
+  double value;
+};
+#define DOUBLE__INIT \
+ { PROTOBUF_C_MESSAGE_INIT (&double__descriptor) \
     , 0 }
 
 
@@ -52,10 +74,54 @@ Varint *
 void   varint__free_unpacked
                      (Varint *message,
                       ProtobufCAllocator *allocator);
+/* Uint32 methods */
+void   uint32__init
+                     (Uint32         *message);
+size_t uint32__get_packed_size
+                     (const Uint32   *message);
+size_t uint32__pack
+                     (const Uint32   *message,
+                      uint8_t             *out);
+size_t uint32__pack_to_buffer
+                     (const Uint32   *message,
+                      ProtobufCBuffer     *buffer);
+Uint32 *
+       uint32__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data);
+void   uint32__free_unpacked
+                     (Uint32 *message,
+                      ProtobufCAllocator *allocator);
+/* Double methods */
+void   double__init
+                     (Double         *message);
+size_t double__get_packed_size
+                     (const Double   *message);
+size_t double__pack
+                     (const Double   *message,
+                      uint8_t             *out);
+size_t double__pack_to_buffer
+                     (const Double   *message,
+                      ProtobufCBuffer     *buffer);
+Double *
+       double__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data);
+void   double__free_unpacked
+                     (Double *message,
+                      ProtobufCAllocator *allocator);
 /* --- per-message closures --- */
 
 typedef void (*Varint_Closure)
                  (const Varint *message,
+                  void *closure_data);
+typedef void (*Uint32_Closure)
+                 (const Uint32 *message,
+                  void *closure_data);
+typedef void (*Double_Closure)
+                 (const Double *message,
                   void *closure_data);
 
 /* --- services --- */
@@ -64,6 +130,8 @@ typedef void (*Varint_Closure)
 /* --- descriptors --- */
 
 extern const ProtobufCMessageDescriptor varint__descriptor;
+extern const ProtobufCMessageDescriptor uint32__descriptor;
+extern const ProtobufCMessageDescriptor double__descriptor;
 
 PROTOBUF_C__END_DECLS
 

@@ -52,6 +52,96 @@ void   varint__free_unpacked
   assert(message->base.descriptor == &varint__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
+void   uint32__init
+                     (Uint32         *message)
+{
+  static const Uint32 init_value = UINT32__INIT;
+  *message = init_value;
+}
+size_t uint32__get_packed_size
+                     (const Uint32 *message)
+{
+  assert(message->base.descriptor == &uint32__descriptor);
+  return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
+}
+size_t uint32__pack
+                     (const Uint32 *message,
+                      uint8_t       *out)
+{
+  assert(message->base.descriptor == &uint32__descriptor);
+  return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
+}
+size_t uint32__pack_to_buffer
+                     (const Uint32 *message,
+                      ProtobufCBuffer *buffer)
+{
+  assert(message->base.descriptor == &uint32__descriptor);
+  return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
+}
+Uint32 *
+       uint32__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data)
+{
+  return (Uint32 *)
+     protobuf_c_message_unpack (&uint32__descriptor,
+                                allocator, len, data);
+}
+void   uint32__free_unpacked
+                     (Uint32 *message,
+                      ProtobufCAllocator *allocator)
+{
+  if(!message)
+    return;
+  assert(message->base.descriptor == &uint32__descriptor);
+  protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
+}
+void   double__init
+                     (Double         *message)
+{
+  static const Double init_value = DOUBLE__INIT;
+  *message = init_value;
+}
+size_t double__get_packed_size
+                     (const Double *message)
+{
+  assert(message->base.descriptor == &double__descriptor);
+  return protobuf_c_message_get_packed_size ((const ProtobufCMessage*)(message));
+}
+size_t double__pack
+                     (const Double *message,
+                      uint8_t       *out)
+{
+  assert(message->base.descriptor == &double__descriptor);
+  return protobuf_c_message_pack ((const ProtobufCMessage*)message, out);
+}
+size_t double__pack_to_buffer
+                     (const Double *message,
+                      ProtobufCBuffer *buffer)
+{
+  assert(message->base.descriptor == &double__descriptor);
+  return protobuf_c_message_pack_to_buffer ((const ProtobufCMessage*)message, buffer);
+}
+Double *
+       double__unpack
+                     (ProtobufCAllocator  *allocator,
+                      size_t               len,
+                      const uint8_t       *data)
+{
+  return (Double *)
+     protobuf_c_message_unpack (&double__descriptor,
+                                allocator, len, data);
+}
+void   double__free_unpacked
+                     (Double *message,
+                      ProtobufCAllocator *allocator)
+{
+  if(!message)
+    return;
+  assert(message->base.descriptor == &double__descriptor);
+  protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
+}
 static const ProtobufCFieldDescriptor varint__field_descriptors[1] =
 {
   {
@@ -88,5 +178,81 @@ const ProtobufCMessageDescriptor varint__descriptor =
   varint__field_indices_by_name,
   1,  varint__number_ranges,
   (ProtobufCMessageInit) varint__init,
+  NULL,NULL,NULL    /* reserved[123] */
+};
+static const ProtobufCFieldDescriptor uint32__field_descriptors[1] =
+{
+  {
+    "value",
+    1,
+    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_TYPE_UINT32,
+    0,   /* quantifier_offset */
+    offsetof(Uint32, value),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+};
+static const unsigned uint32__field_indices_by_name[] = {
+  0,   /* field[0] = value */
+};
+static const ProtobufCIntRange uint32__number_ranges[1 + 1] =
+{
+  { 1, 0 },
+  { 0, 1 }
+};
+const ProtobufCMessageDescriptor uint32__descriptor =
+{
+  PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
+  "uint32",
+  "Uint32",
+  "Uint32",
+  "",
+  sizeof(Uint32),
+  1,
+  uint32__field_descriptors,
+  uint32__field_indices_by_name,
+  1,  uint32__number_ranges,
+  (ProtobufCMessageInit) uint32__init,
+  NULL,NULL,NULL    /* reserved[123] */
+};
+static const ProtobufCFieldDescriptor double__field_descriptors[1] =
+{
+  {
+    "value",
+    1,
+    PROTOBUF_C_LABEL_NONE,
+    PROTOBUF_C_TYPE_DOUBLE,
+    0,   /* quantifier_offset */
+    offsetof(Double, value),
+    NULL,
+    NULL,
+    0,             /* flags */
+    0,NULL,NULL    /* reserved1,reserved2, etc */
+  },
+};
+static const unsigned double__field_indices_by_name[] = {
+  0,   /* field[0] = value */
+};
+static const ProtobufCIntRange double__number_ranges[1 + 1] =
+{
+  { 1, 0 },
+  { 0, 1 }
+};
+const ProtobufCMessageDescriptor double__descriptor =
+{
+  PROTOBUF_C__MESSAGE_DESCRIPTOR_MAGIC,
+  "double",
+  "Double",
+  "Double",
+  "",
+  sizeof(Double),
+  1,
+  double__field_descriptors,
+  double__field_indices_by_name,
+  1,  double__number_ranges,
+  (ProtobufCMessageInit) double__init,
   NULL,NULL,NULL    /* reserved[123] */
 };

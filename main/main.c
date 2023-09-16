@@ -9,6 +9,8 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
+static const char *TAG = "KSP-main";
+
 int clamp(int num, int limit1, int limit2) {
     int min_limit = (limit1 < limit2) ? limit1 : limit2;
     int max_limit = (limit1 > limit2) ? limit1 : limit2;
@@ -61,9 +63,21 @@ void app_main(void){
         .error_prev = 0,
     };
 
-    while (true)
-    {
-        vTaskDelay(1000 / portTICK_PERIOD_MS); // 等待1秒钟
+    KRPC_CREATE_REQUEST(request_ut, 1);
+    KRPC_CALL_SpaceCenter_UT(get_ut, request_ut, 0);
+    Krpc__Schema__Response *response_ut;
+    krpc_Request(&request_ut, &response_ut);
+    ESP_LOGI(TAG, "time: %lf", decode_double(response_ut->results[0]->value.data, response_ut->results[0]->value.len));
+
+    KRPC_CREATE_REQUEST(request_vessel, 1);
+    KRPC_CALL_SpaceCenter_ActiveVessel(get_vessel, request_vessel, 0);
+    Krpc__Schema__Response *response_vessel;
+    //ESP_LOGI(TAG, "init ok");
+    krpc_Request(&request_vessel, &response_vessel);
+    ESP_LOGI(TAG, "vessel: %d", response_vessel->results[0]->value.len);
+    ESP_LOGI(TAG, "vessel: %d", response_vessel->results[0]->value.data[0]);
+    while (true){
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
     
 }
