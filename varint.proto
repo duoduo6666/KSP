@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+message varint {
+    uint32 value = 1;
+}
+
+message uint32 {
+    uint32 value = 1;
+}
+message double {
+    double value = 1;
+}
