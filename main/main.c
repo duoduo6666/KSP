@@ -6,6 +6,8 @@
 #include "socket.h"
 #include "krpc.h"
 
+#include "varint.pb-c.h"
+
 static const char *TAG = "KSP-main";
 
 int clamp(int num, int limit1, int limit2) {
@@ -40,6 +42,24 @@ float PID_update(PID_t *pid, float error, float dt){
     return p + i + d;
 }
 
+ProtobufCBinaryData vessel, flight, control;
+
+
+Krpc__Schema__Argument request_set_throttle_argument0 = KRPC__SCHEMA__ARGUMENT__INIT;
+Krpc__Schema__Argument request_set_throttle_argument1 = KRPC__SCHEMA__ARGUMENT__INIT;
+#define set_throttle_init() \
+    Krpc__Schema__Response *response_set_throttle; \
+    KRPC_CREATE_REQUEST(request_set_throttle, 1); \
+    request_set_throttle_argument0.position = 0; request_set_throttle_argument0.value = control; \
+    request_set_throttle_argument1.position = 1; \
+    KRPC_CALL_Control_set_throttle(set_throttle, request_set_throttle, 0, request_set_throttle_argument0, request_set_throttle_argument1);
+#define set_throttle(v, buf, _len) \
+    encode_float(v, &buf, &_len); \
+    request_set_throttle_argument1.value.data = buf+1; \
+    request_set_throttle_argument1.value.len = _len-1; \
+    krpc_Request(&request_set_throttle, &response_set_throttle); \
+    free(buf);
+
 void app_main(void){
     ESP_ERROR_CHECK(LED_init());
     ESP_ERROR_CHECK(LED_set_pixel(1, 1, 0));
@@ -52,12 +72,12 @@ void app_main(void){
     ESP_ERROR_CHECK(krpc_GetStatus());
 
     PID_t pid = {
-        .kp = 0.1,
-        .ki = 0.0,  // Corrected initialization
-        .kd = 0.2,  // You might want to initialize .kd as well
-        .integral_output_limit = 1,
-        .integral = 0,
-        .error_prev = 0,
+        .kp = 0.09f,
+        .ki = 0.01f,  // Corrected initialization
+        .kd = 1.0f,  // You might want to initialize .kd as well
+        .integral_output_limit = 1.0f,
+        .integral = 0.0f,
+        .error_prev = 0.0f,
     };
 
     KRPC_CREATE_REQUEST(request_ut, 1);
@@ -70,7 +90,7 @@ void app_main(void){
     KRPC_CALL_SpaceCenter_ActiveVessel(get_vessel, request_vessel, 0);
     Krpc__Schema__Response *response_vessel;
     krpc_Request(&request_vessel, &response_vessel);
-    ProtobufCBinaryData vessel = response_vessel->results[0]->value;
+    vessel = response_vessel->results[0]->value;
 
     KRPC_CREATE_REQUEST(request_f_c, 2);
     Krpc__Schema__Argument vessel_argument = KRPC__SCHEMA__ARGUMENT__INIT;
@@ -79,8 +99,8 @@ void app_main(void){
     KRPC_CALL_Vessel_Control(get_control, request_f_c, 1, vessel_argument);
     Krpc__Schema__Response *response_f_c;
     krpc_Request(&request_f_c, &response_f_c);
-    ProtobufCBinaryData flight = response_f_c->results[0]->value;
-    ProtobufCBinaryData control = response_f_c->results[1]->value;
+    flight = response_f_c->results[0]->value;
+    control = response_f_c->results[1]->value;
     
     KRPC_CREATE_REQUEST(request_SurfaceAltitude, 1);
     Krpc__Schema__Argument request_SurfaceAltitude_argument0 = KRPC__SCHEMA__ARGUMENT__INIT;
@@ -91,24 +111,34 @@ void app_main(void){
     double high = decode_double(response_SurfaceAltitude->results[0]->value.data, response_SurfaceAltitude->results[0]->value.len);
     ESP_LOGI(TAG, "high: %lf", high);
 
-    KRPC_CREATE_REQUEST(request_set_throttle, 1);
-    Krpc__Schema__Argument request_set_throttle_argument0 = KRPC__SCHEMA__ARGUMENT__INIT;
-    request_set_throttle_argument0.position = 0; request_set_throttle_argument0.value = control;
-    Krpc__Schema__Argument request_set_throttle_argument1 = KRPC__SCHEMA__ARGUMENT__INIT;
+    set_throttle_init();
     size_t len;
     uint8_t *buf; 
-    encode_float(1, &buf, &len);
-    ProtobufCBinaryData throttle = {
-        .data = buf+1,
-        .len = len-1,
-    };
-    request_set_throttle_argument1.position = 1; request_set_throttle_argument1.value = throttle;
-    KRPC_CALL_Control_set_throttle(set_throttle, request_set_throttle, 0, request_set_throttle_argument0, request_set_throttle_argument1);
-    Krpc__Schema__Response *response_set_throttle;
-    krpc_Request(&request_set_throttle, &response_set_throttle);
-    
+    // for (float i=0.01; i<=1; i+=0.01){
+    //     set_throttle(i, buf, len);
+    // }
+
+
+    krpc_Request(&request_ut, &response_ut);
+    double game_prev_time = decode_double(response_ut->results[0]->value.data, response_ut->results[0]->value.len);
+    double ut;
+    double game_delta_time;
+    double height;
+    double error;
     while (true){
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        krpc_Request(&request_ut, &response_ut);
+        ut = decode_double(response_ut->results[0]->value.data, response_ut->results[0]->value.len);
+        game_delta_time = ut - game_prev_time;
+        if (game_delta_time < 0.019){
+            continue;
+        }
+
+        krpc_Request(&request_SurfaceAltitude, &response_SurfaceAltitude);
+        height = decode_double(response_SurfaceAltitude->results[0]->value.data, response_SurfaceAltitude->results[0]->value.len);
+        error = 10 - height;
+        set_throttle(PID_update(&pid, (float)error, (float)game_delta_time), buf, len);
+        ESP_LOGI(TAG, "dt=%f, error=%f" ,game_delta_time, error);
+        game_prev_time = ut;
     }
     
 }

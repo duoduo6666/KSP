@@ -52,6 +52,11 @@ double decode_double(uint8_t *double_buf, size_t double_len){
     return value;
 }
 esp_err_t encode_float(float value, uint8_t **float_buf, size_t *float_len){
+    if (value == 0.0F){
+        *float_len = 0;
+        *float_buf = NULL;
+        return ESP_OK;
+    }
     Float float_ = FLOAT__INIT;
     float_.value = value;
     *float_len = float__get_packed_size(&float_);
