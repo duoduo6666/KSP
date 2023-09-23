@@ -6,9 +6,6 @@
 #include "socket.h"
 #include "krpc.h"
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-
 static const char *TAG = "KSP-main";
 
 int clamp(int num, int limit1, int limit2) {
@@ -75,7 +72,7 @@ void app_main(void){
     krpc_Request(&request_vessel, &response_vessel);
     ProtobufCBinaryData vessel = response_vessel->results[0]->value;
 
-    KRPC_CREATE_REQUEST(request_f_c, 1);
+    KRPC_CREATE_REQUEST(request_f_c, 2);
     Krpc__Schema__Argument vessel_argument = KRPC__SCHEMA__ARGUMENT__INIT;
     vessel_argument.position = 0; vessel_argument.value = vessel;
     KRPC_CALL_Vessel_Flight(get_flight, request_f_c, 0, vessel_argument);

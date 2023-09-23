@@ -180,9 +180,9 @@ esp_err_t krpc_Request(Krpc__Schema__Request *request, Krpc__Schema__Response **
     size_t len;
     
     len = krpc__schema__request__get_packed_size(request);
-    unsigned int fm = esp_get_free_heap_size();
-    ESP_LOGI(TAG, "剩余%ubyte内存", fm);
-    ESP_LOGI(TAG, "申请%ubyte内存", len);
+    // unsigned int fm = esp_get_free_heap_size();
+    // ESP_LOGI(TAG, "剩余%ubyte内存", fm);
+    // ESP_LOGI(TAG, "申请%ubyte内存", len);
     MALLOC(buf, len); 
     krpc__schema__request__pack(request,buf);
     krpc_send(buf, len);
