@@ -4,11 +4,10 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/duoduo/.espressif/tools/xtensa-esp32s3-elf/**",
-                "/home/duoduo/esp/esp-idf/components/freertos/FreeRTOS-Kernel/include/**",
-                "/home/duoduo/esp/esp-idf/components/**",
-                "/home/duoduo/esp/krpc/managed_components/espressif__led_strip/**",
-                "/home/duoduo/esp/krpc/managed_components/**"
+                "${workspaceFolder}/managed_components/**"
+                "${HOME}/.espressif/tools/xtensa-esp32s3-elf/**",
+                "${HOME}/esp/esp-idf/components/freertos/FreeRTOS-Kernel/include/**",
+                "${HOME}/esp/esp-idf/components/**",
             ],
             "defines": [],
             "compilerPath": "/home/duoduo/.espressif/tools/xtensa-esp32s3-elf/esp-12.2.0_20230208/xtensa-esp32s3-elf/bin/xtensa-esp32s3-elf-gcc",
