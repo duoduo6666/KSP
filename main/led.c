@@ -39,7 +39,7 @@ esp_err_t LED_init(){
 
 esp_err_t LED_set_pixel(uint32_t red, uint32_t green, uint32_t blue){
     esp_err_t ret = led_strip_set_pixel(led_strip, 0, red, green, blue);
-    esp_err_t ret = led_strip_refresh(led_strip);
+    led_strip_refresh(led_strip);
     return ret;
 }
 

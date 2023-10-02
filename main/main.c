@@ -63,7 +63,6 @@ Krpc__Schema__Argument request_set_throttle_argument1 = KRPC__SCHEMA__ARGUMENT__
 void app_main(void){
     ESP_ERROR_CHECK(LED_init());
     ESP_ERROR_CHECK(LED_set_pixel(1, 1, 0));
-    ESP_ERROR_CHECK(LED_open());
 
     ESP_ERROR_CHECK(wifi_sta_init());
     ESP_ERROR_CHECK(socket_init());
