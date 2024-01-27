@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "ESP32-S3",
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/managed_components/**",
@@ -10,7 +10,7 @@
                 "${HOME}/esp/esp-idf/components/**"
             ],
             "defines": [],
-            "compilerPath": "/home/duoduo/.espressif/tools/xtensa-esp32s3-elf/esp-12.2.0_20230208/xtensa-esp32s3-elf/bin/xtensa-esp32s3-elf-gcc",
+            "compilerPath": "${config:idf.toolsPath}/tools/xtensa-esp32s3-elf/esp-12.2.0_20230208/xtensa-esp32s3-elf/bin/xtensa-esp32s3-elf-gcc",
             "cStandard": "c17",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "${default}",

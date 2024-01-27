@@ -2,9 +2,7 @@
 
 /managed_components
 
-/.vscode
 
 *.back
 
 sdkconfig.old
-dependencies.lock
